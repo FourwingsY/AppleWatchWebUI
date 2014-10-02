@@ -1,0 +1,50 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="./applewatch.css">
+</head>
+<body>
+<div id="background">
+	<div id="blackback"></div>
+	<svg id="watch" viewBox="-1.855 -2.325 3.75 4.7"></svg>
+	<!-- <svg id="watch" viewBox="-375 -470 750 940"></svg> -->
+</div>
+
+<script type="text/javascript" src="./Utility.js"></script>
+<script type="text/javascript" src="./AppCircle.js"></script>
+<script type="text/javascript" src="./Sentinel.js"></script>
+<script type="text/javascript" src="./Hexagon.js"></script>
+<script type="text/javascript" src="./Display.js"></script>
+<script type="text/javascript" src="./DragModule.js"></script>
+<script type="text/javascript" src="./ZoomModule.js"></script>
+<script type="text/javascript" src="./ClickModule.js"></script>
+
+<script>
+var start = null;
+var startState = null;
+var dragFlag = false;
+var animationTime = 0;
+var currentAnimationModule = null;
+
+window.onload = function() {
+	var svg = document.getElementById("watch");
+	var hex = new Hexagon(new AppCircle("origin"));
+	for (var i = 0; i < 80; i++) {
+		hex.addApp("app"+i);
+	}
+
+	display = new Display(svg, hex);
+	display.draw();
+
+	var click = new ClickModule(display);
+	click.setClickable();
+
+	var drag = new DragModule(display);
+	drag.setDraggable();
+	
+	var zoom = new ZoomModule(display);
+	zoom.setZoomable();
+}
+
+</script>
+</body>
+</html>

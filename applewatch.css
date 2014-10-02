@@ -1,0 +1,33 @@
+html, body {
+	margin: 0;
+}
+#background {
+	position: relative;
+	width: 780px;
+	height: 725px;
+	margin: 0 auto;
+	background-image: url("./applewatch.png");
+	background-size: contain;
+	background-repeat: no-repeat;
+}
+#blackback {
+	position: absolute;
+	left: 204px;
+	top: 127px;
+	width: 375px;
+	height: 470px;
+	background-color: black;
+}
+#watch {
+	position: absolute;
+	left: 204px;
+	top: 127px;
+	width: 375px;
+	height: 470px;
+
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
