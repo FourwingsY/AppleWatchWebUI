@@ -24,29 +24,111 @@ WatchApp.prototype.makeApp = function(appBox) {
 	background.setAttribute("height", appBox[3]);
 	group.appendChild(background);
 
-	var center = [appBox[0] + appBox[2]/2, appBox[1] + appBox[3]/2];
-	var radius = appBox[2] * 0.45;
+	this.center = [appBox[0] + appBox[2]/2, appBox[1] + appBox[3]/2];
+	this.radius = appBox[2] * 0.45;
 
-	var ticktocks = this.drawTicks(center, radius);
+	var ticktocks = this.drawTicks();
 	group.appendChild(ticktocks);
 
 
 	this.addStyleTag();
 
-	var secHand = this.drawLine(center, [0,-radius], null, "orange");
-	secHand.setAttribute("class", "watch-hand second");
-	group.appendChild(secHand);
-
-	var minHand = this.drawLine(center, [0,-0.9*radius]);
-	minHand.setAttribute("class", "watch-hand minute");
-	group.appendChild(minHand);
-
-	var hourHand = this.drawLine(center, [0,-0.6*radius]);
+	var hourHand = this.drawHourHand();
 	hourHand.setAttribute("class", "watch-hand hour");
 	group.appendChild(hourHand);
 
+	var minHand = this.drawMinuteHand();
+	minHand.setAttribute("class", "watch-hand minute");
+	group.appendChild(minHand);
+	
+
+	var secHand = this.drawSecondHand();
+	secHand.setAttribute("class", "watch-hand second");
+	group.appendChild(secHand);
+
 	
 	return group;
+}
+
+WatchApp.prototype.drawSecondHand = function() {
+	var secondHandPinRadius = 0.02 * this.radius;
+	var secondHandStrokeWidth = 0.02 * this.radius;
+	var secondHand = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
+	var mainHandStart = [this.center[0], this.center[1] - secondHandPinRadius];
+	var mainHandMove = [0, - this.radius + secondHandPinRadius];
+	var mainHand = this.drawLine(mainHandStart, mainHandMove, secondHandStrokeWidth, "orange");
+
+	var tailStart = [this.center[0], this.center[1] + secondHandPinRadius];
+	var tailMove = [0, 0.03];
+	var tail = this.drawLine(tailStart, tailMove, secondHandStrokeWidth, "orange");
+
+	var pin = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+	pin.setAttribute("stroke-width", secondHandStrokeWidth/2);
+	pin.setAttribute("stroke", "orange");
+	pin.setAttribute("cx", this.center[0]);
+	pin.setAttribute("cy", this.center[1]);
+	pin.setAttribute("r", secondHandPinRadius);
+
+	secondHand.appendChild(pin);
+	secondHand.appendChild(mainHand);
+	secondHand.appendChild(tail);
+	secondHand.setAttribute("opacity", 0.7);
+	return secondHand;
+}
+
+WatchApp.prototype.drawMinuteHand = function() {
+	var minuteHandPinRadius = 0.03 * this.radius;
+	var minuteHand = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
+	var thinHandStrokeWidth = 0.02 * this.radius;
+	var thinHandStart = [this.center[0], this.center[1] - minuteHandPinRadius];
+	var thinHandMove = [0, - this.radius * 0.2 + minuteHandPinRadius];
+	var thinHand = this.drawLine(thinHandStart, thinHandMove, thinHandStrokeWidth, "white");
+
+	var thickHandStrokeWidth = 0.07 * this.radius;
+	var thickHandStart = [this.center[0], this.center[1] - this.radius * 0.2 + minuteHandPinRadius];
+	var thickHandMove = [0, - this.radius * 0.78 + minuteHandPinRadius];
+	var thickHand = this.drawLine(thickHandStart, thickHandMove, thickHandStrokeWidth, "white");
+
+	var pin = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+	pin.setAttribute("stroke-width", thinHandStrokeWidth);
+	pin.setAttribute("stroke", "white");
+	pin.setAttribute("cx", this.center[0]);
+	pin.setAttribute("cy", this.center[1]);
+	pin.setAttribute("r", minuteHandPinRadius);
+
+	minuteHand.appendChild(pin);
+	minuteHand.appendChild(thinHand);
+	minuteHand.appendChild(thickHand);
+	return minuteHand;
+}
+
+WatchApp.prototype.drawHourHand = function() {
+	var hourHandPinRadius = 0.03 * this.radius;
+	var hourHand = document.createElementNS("http://www.w3.org/2000/svg", "g");
+
+	var thinHandStrokeWidth = 0.02 * this.radius;
+	var thinHandStart = [this.center[0], this.center[1] - hourHandPinRadius];
+	var thinHandMove = [0, - this.radius * 0.2 + hourHandPinRadius];
+	var thinHand = this.drawLine(thinHandStart, thinHandMove, thinHandStrokeWidth, "white");
+
+	var thickHandStrokeWidth = 0.07 * this.radius;
+	var thickHandStart = [this.center[0], this.center[1] - this.radius * 0.2 + hourHandPinRadius];
+	var thickHandMove = [0, - this.radius * 0.5 + hourHandPinRadius];
+	var thickHand = this.drawLine(thickHandStart, thickHandMove, thickHandStrokeWidth, "white");
+
+	var pin = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+	pin.setAttribute("stroke-width", thinHandStrokeWidth);
+	pin.setAttribute("stroke", "white");
+	pin.setAttribute("cx", this.center[0]);
+	pin.setAttribute("cy", this.center[1]);
+	pin.setAttribute("r", hourHandPinRadius);
+
+	hourHand.appendChild(pin);
+	hourHand.appendChild(thinHand);
+	hourHand.appendChild(thickHand);
+	return hourHand;
 }
 
 WatchApp.prototype.addStyleTag = function() {
@@ -109,18 +191,20 @@ WatchApp.prototype.addStyleTag = function() {
 	style.innerHTML = secondStyle + minuteStyle + hourStyle;
 	document.getElementsByTagName('head')[0].appendChild(style);
 }
-WatchApp.prototype.drawTicks = function(center, radius) {
+WatchApp.prototype.drawTicks = function() {
+	var origin = this.center;
+	var radius = this.radius
 	var group = document.createElementNS("http://www.w3.org/2000/svg", "g");
 	group.setAttribute("id", "ticktocks");
 	for (var i = 0; i < 60; i++) {
 		var angle = i * 6;
 		if (i % 5 == 0) {
-			var tock = this.drawLine([center[0],center[1]-radius], [0, 0.05*radius], 0.006, "gray");
-			tock.setAttribute("transform", "rotate("+angle+" "+center.join(" ")+")");
+			var tock = this.drawLine([origin[0],origin[1]-radius], [0, 0.05*radius], 0.006, "gray");
+			tock.setAttribute("transform", "rotate("+angle+" "+origin.join(" ")+")");
 			group.appendChild(tock);
 		}
-		var tick = this.drawLine([center[0],center[1]-radius], [0, 0.03*radius], 0.004, "gray");
-		tick.setAttribute("transform", "rotate("+angle+" "+center.join(" ")+")");
+		var tick = this.drawLine([origin[0],origin[1]-radius], [0, 0.03*radius], 0.004, "gray");
+		tick.setAttribute("transform", "rotate("+angle+" "+origin.join(" ")+")");
 		group.appendChild(tick);
 	}
 	return group;
@@ -134,13 +218,11 @@ Math.degrees = function(radians) {
   return radians * 180 / Math.PI;
 };
 
-
-
-WatchApp.prototype.drawLine = function(startPoint, endPoint, lineWidth, color) {
+WatchApp.prototype.drawLine = function(startPoint, lineTo, lineWidth, color) {
 	if (color == undefined || color == null) color = "white";
 	if (lineWidth == undefined || lineWidth == null) lineWidth = 0.004;
 	var line = document.createElementNS("http://www.w3.org/2000/svg", "path");
-	var d = "M" + startPoint.join(" ") + " l " + endPoint.join(" ");
+	var d = "M" + startPoint.join(" ") + " l " + lineTo.join(" ");
 	line.setAttribute("stroke-width", lineWidth);
 	line.setAttribute("stroke-linecap", "round");
 	line.setAttribute("stroke", color);
