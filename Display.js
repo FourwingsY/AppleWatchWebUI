@@ -209,15 +209,12 @@ Display.prototype = {
 	openApp: function(circle) {
 		this.interactionEnabled = false;
 
-		var eRect = circle.makeApp();
-		var circleCenter = circle.getTunedPosition();
 		var width = 0.6 * 2 * circle.radius;
 		var height = 0.75 * 2 * circle.radius;
+		var circleCenter = circle.getTunedPosition();
 
-		eRect.setAttribute("x", circleCenter[0] - width/2);
-		eRect.setAttribute("y", circleCenter[1] - height/2);
-		eRect.setAttribute("width", width);
-		eRect.setAttribute("height", height);
+		var appBox = [circleCenter[0] - width/2, circleCenter[1] - height/2, width, height];
+		var eRect = circle.makeApp(appBox);
 		
 		this.element.appendChild(eRect);
 

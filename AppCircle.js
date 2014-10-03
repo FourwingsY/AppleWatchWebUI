@@ -2,7 +2,7 @@ function AppCircle(_name, _parentMap) {
 	this.parentMap = _parentMap;
 	this.element = undefined;
 	this.appName = _name;
-	this.app = this.makeApp();
+	// this.app = this.makeApp();
 	this.radius = 0.33;
 	this.coord = [];
 	this.color = this.getRandomColor();
@@ -63,10 +63,14 @@ AppCircle.prototype = {
 		this.radius = newRad;
 		this.element.setAttribute("r", newRad);
 	},
-	makeApp: function() {
+	makeApp: function(appBox) {
 		var appRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 		appRect.setAttribute("fill", this.getRandomColor());
 		appRect.setAttribute("opacity", 0);
+		appRect.setAttribute("x", appBox[0]);
+		appRect.setAttribute("y", appBox[1]);
+		appRect.setAttribute("width", appBox[2]);
+		appRect.setAttribute("height", appBox[3]);
 		return appRect;
 	},
 	// http://stackoverflow.com/a/1484514

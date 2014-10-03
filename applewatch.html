@@ -1,6 +1,7 @@
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="./applewatch.css">
+<!-- <link rel="stylesheet" type="text/css" href="./watch.css"> -->
 </head>
 <body>
 <div id="background">
@@ -11,6 +12,7 @@
 
 <script type="text/javascript" src="./Utility.js"></script>
 <script type="text/javascript" src="./AppCircle.js"></script>
+<script type="text/javascript" src="./WatchApp.js"></script>
 <script type="text/javascript" src="./Sentinel.js"></script>
 <script type="text/javascript" src="./Hexagon.js"></script>
 <script type="text/javascript" src="./Display.js"></script>
@@ -27,7 +29,7 @@ var currentAnimationModule = null;
 
 window.onload = function() {
 	var svg = document.getElementById("watch");
-	var hex = new Hexagon(new AppCircle("origin"));
+	var hex = new Hexagon(new WatchApp("watch"));
 	for (var i = 0; i < 80; i++) {
 		hex.addApp("app"+i);
 	}
