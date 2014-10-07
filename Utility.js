@@ -38,10 +38,18 @@ var Utility = {
 	},
 
 	interpolation: function(p, w1, w2, v1, v2) {
-		if (p >= w1) {
-			return v1;
-		} else if (p <= w2) {
-			return v2;
+		if (w1 > w2) {
+			if (p >= w1) {
+				return v1;
+			} else if (p <= w2) {
+				return v2;
+			}
+		} else if (w1 < w2) {
+			if (p <= w1) {
+				return v1;
+			} else if (p >= w2) {
+				return v2;
+			}
 		}
 
 		var result = [];

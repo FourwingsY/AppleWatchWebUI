@@ -1,15 +1,39 @@
 <html>
 <head>
 <link rel="stylesheet" type="text/css" href="./applewatch.css">
-<!-- <link rel="stylesheet" type="text/css" href="./watch.css"> -->
+<style type="text/css">
+	.app-open {
+		display: block;
+		opacity: 1;
+		1-webkit-transition: opacity 2s;
+		1transition: opacity 2s;
+	}
+	.app-open-end {
+		opacity: 1;
+	}
+	#watch {
+		position: relative;
+		z-index: 1;
+	}
+	#runningApp {
+		position: absolute;
+		z-index: 3;
+	}
+</style>
 </head>
 <body>
 <div id="background">
 	<div id="blackback"></div>
-	<svg id="watch" viewBox="-1.855 -2.325 3.75 4.7"></svg>
-	<!-- <svg id="watch" viewBox="-375 -470 750 940"></svg> -->
+	<svg id="watch" class="display" viewBox="-1.855 -2.325 3.75 4.7"
+		version="1.1"
+    	xmlns="http://www.w3.org/2000/svg"
+    	xmlns:xlink="http://www.w3.org/1999/xlink">
+    </svg>
+	<div id="runningApp"></div>
 </div>
+<script type="text/javascript" src="./Watch.js"></script>
 
+<script type="text/javascript" src="./Animation.js"></script>
 <script type="text/javascript" src="./Utility.js"></script>
 <script type="text/javascript" src="./AppCircle.js"></script>
 <script type="text/javascript" src="./WatchApp.js"></script>
@@ -31,7 +55,7 @@ window.onload = function() {
 	var svg = document.getElementById("watch");
 	var hex = new Hexagon(new WatchApp("watch"));
 	for (var i = 0; i < 80; i++) {
-		hex.addApp("app"+i);
+		hex.addApp("anon");
 	}
 
 	display = new Display(svg, hex);
@@ -45,6 +69,42 @@ window.onload = function() {
 	
 	var zoom = new ZoomModule(display);
 	zoom.setZoomable();
+}
+
+function animateSvgAttribute(svg, startCond, endCond, time, callback) {
+	function animation(timestamp) {
+		var progress;
+		if (start === null) start = timestamp;
+		progress = (timestamp - start) / time;
+		console.log(progress);
+		// 변화될 상태 계산
+		var states = {};
+		for (option in startCond) {
+			var state = Utility.interpolation(progress, 0, 1, startCond[option], endCond[option]);
+			states[option] = state;
+			if (states[option] instanceof Array)
+				states[option] = states[option].join(" ");
+		}
+		// debugger;
+		for (option in states) {
+			svg.setAttribute(option, states[option]);
+			console.log(states[option]);
+		}
+
+		if (progress < 1) {
+			window.requestAnimationFrame(animation);
+		} else {
+			start = null;
+			startState = null;
+			interactionEnabled = true;
+			runningApp = null;
+			if (callback !== null)
+				callback();
+			if (currentAnimationModule !== null)
+				currentAnimationModule.reset();
+		}
+	}
+	window.requestAnimationFrame(animation);
 }
 
 </script>

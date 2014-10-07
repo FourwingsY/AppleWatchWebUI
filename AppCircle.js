@@ -1,11 +1,12 @@
 function AppCircle(_name, _parentMap) {
-	this.parentMap = _parentMap;
-	this.element = undefined;
 	this.appName = _name;
-	// this.app = this.makeApp();
-	this.radius = 0.33;
+	this.radius = 50;
 	this.coord = [];
-	this.color = this.getRandomColor();
+	
+	this.backgroundColor = this.getRandomColor();
+	this.icon = this.makeIcon();
+
+	this.parentMap = undefined;
 }
 
 AppCircle.prototype = {
@@ -40,16 +41,16 @@ AppCircle.prototype = {
 		return [x, y];
 	},
 	getTunedPosition: function() {
-		var x = this.element.getAttribute("cx");
-		var y = this.element.getAttribute("cy");
+		var x = this.icon.getAttribute("x") + this.radius;
+		var y = this.icon.getAttribute("y") + this.radius;
 		return [x, y];
 	},
 	tunePosition: function(tuneValue) {
 		var pos = this.getPosition();
 		var x = pos[0] + tuneValue[0];
 		var y = pos[1] + tuneValue[1];
-		this.element.setAttribute("cx", x);
-		this.element.setAttribute("cy", y);
+		this.icon.setAttribute("x", x - this.radius);
+		this.icon.setAttribute("y", y - this.radius);
 	},
 	getDistanceFrom: function(anotherCircle) {
 		var sub = Utility.subCoord(this.coord, anotherCircle.coord);
@@ -61,18 +62,10 @@ AppCircle.prototype = {
 	setRadius: function(newRad) {
 		// if (this.radius - newRad > 0.1) debugger;
 		this.radius = newRad;
-		this.element.setAttribute("r", newRad);
+		this.icon.setAttribute("width", newRad*2);
+		this.icon.setAttribute("height", newRad*2);
 	},
-	makeApp: function(appBox) {
-		var appRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-		appRect.setAttribute("fill", this.getRandomColor());
-		appRect.setAttribute("opacity", 0);
-		appRect.setAttribute("x", appBox[0]);
-		appRect.setAttribute("y", appBox[1]);
-		appRect.setAttribute("width", appBox[2]);
-		appRect.setAttribute("height", appBox[3]);
-		return appRect;
-	},
+
 	// http://stackoverflow.com/a/1484514
 	getRandomColor: function() {
 		var letters = '0123456789ABCDEF'.split('');
@@ -91,5 +84,22 @@ AppCircle.prototype = {
 	},
 	isSentinel: function() {
 		return false;
+	},
+	makeIcon: function() {
+		var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+		svg.setAttribute("viewBox", "-50 -50 100 100");
+		svg.id = "anon-icon";
+
+		var icon = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+		icon.setAttribute("cx", 0);
+		icon.setAttribute("cy", 0);
+		icon.setAttribute("r", 50);
+		icon.setAttribute("fill", this.getRandomColor());
+		svg.appendChild(icon)
+	
+		return svg;
+	},
+	getAppAddr: function() {
+		return "./apps/anon.html";
 	}
 }

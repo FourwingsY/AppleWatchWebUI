@@ -1,0 +1,21 @@
+
+<svg viewBox="-50 -50 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
+<circle cx="0" cy="0" r="50" fill="yellow"></circle>
+<!-- <script type="text/javascript"><![CDATA[
+function getRandomColor() {
+	var letters = '0123456789ABCDEF'.split('');
+	var color = '#';
+	for (var i = 0; i < 6; i++ ) {
+		color += letters[Math.floor(Math.random() * 16)];
+	}
+	return color;
+}
+
+var svg = document.getElementsByTagName("svg")[0];
+var svgns = svg.getAttribute('xmlns');
+var circle = svg.getElementsByTagName("circle")[0];
+console.log(circle);
+circle.setAttribute("fill", getRandomColor());
+
+]]></script> -->
+</svg>

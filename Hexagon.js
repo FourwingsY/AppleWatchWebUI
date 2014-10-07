@@ -20,7 +20,8 @@ Hexagon.prototype = {
 		return result;
 	},
 	addApp: function(appName) {
-		var newApp = new AppCircle(appName, this);
+		var newApp = new AppCircle(appName);
+		newApp.parentMap = this;
 
 		var parent = this.origin;
 		var dir = Math.floor(Math.random() * 6);

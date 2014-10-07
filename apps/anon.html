@@ -1,0 +1,34 @@
+<html>
+<head>
+	<style type="text/css">
+	html, body {
+		margin: 0;
+	}
+	#anon-background {
+		width: 100%;
+		height: 100%;
+	}
+	</style>
+</head>
+<body>
+<div id="anon-background"></div>
+<script type="text/javascript">
+	function getRandomColor() {
+		var letters = '0123456789ABCDEF'.split('');
+		var color = '#';
+		for (var i = 0; i < 6; i++ ) {
+			color += letters[Math.floor(Math.random() * 16)];
+		}
+		// avoid too-dark color
+		var count = 0;
+		for (var i = 1; i <= 3; i++) {
+			if (color[i] < '4')
+				count ++;
+		}
+		if (count == 3) return this.getRandomColor()
+		return color;
+	}
+	document.getElementById("anon-background").style.backgroundColor = getRandomColor();
+</script>
+</body>
+</html>

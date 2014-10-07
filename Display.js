@@ -31,32 +31,10 @@ Display.prototype = {
 	draw: function() {
 		for (var app in this.map.apps) {
 			var circle = this.map.apps[app];
-			var element = this._drawCircle(circle);
-			circle.element = element;
+			this.element.appendChild(circle.icon);
 		}
 		this.setDisplayCenter(this.currentCenter.getPosition());
 		this.refresh();
-	},
-	_drawCircle: function(circle) {
-		var eCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-		var circlePos = circle.getPosition();
-		eCircle.setAttribute("key", circle.appName);
-		eCircle.setAttribute("cx", circlePos[0]);
-		eCircle.setAttribute("cy", circlePos[1]);
-		eCircle.setAttribute("r", circle.radius);
-		eCircle.setAttribute("fill", circle.color);
-		// eCircle.addEventListener("click", this.clickCircle.bind(this, circle));
-		
-		this.element.appendChild(eCircle);
-
-		// var eText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-		// eText.textContent = circle.coord.toString();
-		// eText.setAttribute("x", circlePos[0]-0.3);
-		// eText.setAttribute("y", circlePos[1]);
-		// eText.setAttribute("font-size", 0.2);
-		// eText.setAttribute("fill", "red");
-		// this.element.appendChild(eText);
-		return eCircle;
 	},
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -209,19 +187,95 @@ Display.prototype = {
 	openApp: function(circle) {
 		this.interactionEnabled = false;
 
-		var width = 0.6 * 2 * circle.radius;
-		var height = 0.75 * 2 * circle.radius;
-		var circleCenter = circle.getTunedPosition();
+		var embeddedApp = document.createElement("embed");
+		embeddedApp.src = circle.getAppAddr();
+		embeddedApp.className="app-open";
+		document.getElementById("runningApp").appendChild(embeddedApp);
 
-		var appBox = [circleCenter[0] - width/2, circleCenter[1] - height/2, width, height];
-		var eRect = circle.makeApp(appBox);
-		
-		this.element.appendChild(eRect);
+		var circlePos = circle.getPosition();
+		var endWidth = circle.radius * 2 * 0.6;
+		var endHeight = circle.radius  * 2 * 0.75;
+		var endViewBox = [circlePos[0] - circle.radius, circlePos[1] - circle.radius * 470 / 375, circle.radius * 2, circle.radius * 2 * 470 / 375];
 
-		window.requestAnimationFrame(this.openAppAnimation.bind(this, eRect));
+		var runningApp = document.querySelector("#runningApp");
+		var appStartWidth = circle.radius*2 / this._getViewBox()[2] * this.element.clientWidth;
+		var appStartHeight = circle.radius*2 / this._getViewBox()[2] * this.element.clientHeight;
+		var animations = [
+			{
+				"element":this.element,
+				"start":{"viewBox":this._getViewBox()},
+				"end":{"viewBox":endViewBox}
+			}
+			// {
+			// 	"element":embeddedApp,
+			// 	"start":{
+			// 		"style.width":appStartWidth,
+			// 		"style.height":appStartHeight
+			// 	},
+			// 	"end":{
+			// 		"style.width":375,
+			// 		"style.height":470
+			// 	}
+			// },
+			// {
+			// 	"element":runningApp,
+			// 	"start":{
+			// 		"style.left":this.element.offsetLeft + this.element.clientWidth / 2 - appStartWidth / 2,
+			// 		"style.top":this.element.offsetTop + this.element.clientHeight / 2 - appStartHeight / 2
+			// 	},
+			// 	"end":{
+			// 		"style.left":this.element.offsetLeft,
+			// 		"style.top":this.element.offsetTop
+			// 	}
+			// }
+		]
+
+		var elementLtwh = [this.element.offsetLeft, this.element.offsetTop, this.element.clientWidth, this.element.clientHeight];
+
+		var animation = function(timestamp) {
+			// console.log(timestamp);
+			var progress;
+			if (start === null) {
+				start = timestamp;
+				embeddedApp.className="app-open app-open-end";
+			}
+			progress = (timestamp - start) / 2000;
+
+			for (var i = 0; i < animations.length; i++) {
+				var definedMotion = animations[i];
+				animateElement(definedMotion.element, definedMotion.start, definedMotion.end, progress);
+			}
+
+			var width = circle.radius*2 / this._getViewBox()[2] * elementLtwh[2];
+			var height = circle.radius*2 / this._getViewBox()[2] * elementLtwh[3];
+			var left = elementLtwh[0] + elementLtwh[2] / 2.0 - width / 2.0;
+			var top = elementLtwh[1] + elementLtwh[3] / 2.0 - height / 2.0;
+
+			// console.log(floor(top), left)
+			console.log(width);
+			var runningApp = document.querySelector("#runningApp");
+
+			runningApp.style.top = top;
+			runningApp.style.left = left;
+			// embeddedApp.style.width = width;
+			// embeddedApp.style.height = height;
+
+			if (progress < 1)
+				window.requestAnimationFrame(animation);
+		}.bind(this)
+
+		window.requestAnimationFrame(animation);
+		// this.openAppAnimation(eRect);
 	},
 
-	openAppAnimation: function(appRect, timestamp) {
+
+	openAppAnimation: function(app) {
+		var startCond = {"viewBox": this._getViewBox()};
+		var endViewBox = app.getAttribute("viewBox").split(" ").map(function(str){return parseFloat(str);});
+		var endCond = {"viewBox": endViewBox}
+		animateSvgAttribute(app, startCond, endCond, 2000, null);
+	},
+	o2penAppAnimation: function(appRect, timestamp) {
 		var progress;
 		if (start === null) start = timestamp;
 		progress = (timestamp - start) / 2000;

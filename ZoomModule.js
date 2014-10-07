@@ -20,7 +20,6 @@ ZoomModule.prototype = {
 		} else if (this.scale < this.display.minScale) {
 			this.scale = this.display.minScale;
 		}
-		console.log(this.scale);
 		this.display.setScale(this.scale);
 	},
 	setZoomable: function() {

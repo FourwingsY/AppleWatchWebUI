@@ -19,6 +19,10 @@ html, body {
 	background-color: black;
 }
 #watch {
+	
+}
+
+.display {
 	position: absolute;
 	left: 204px;
 	top: 127px;
