@@ -19,8 +19,7 @@ Hexagon.prototype = {
 		var result = this.apps[coord.toString()];
 		return result;
 	},
-	addApp: function(appName) {
-		var newApp = new AppCircle(appName);
+	addApp: function(newApp) {
 		newApp.parentMap = this;
 
 		var parent = this.origin;

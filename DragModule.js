@@ -40,9 +40,10 @@ DragModule.prototype = {
 	dragEnd: function(e) {
 		this.displayElement.removeEventListener("mousemove", this.dragFunctionCaches.dragging);
 		this.displayElement.removeEventListener("mouseout", this.dragFunctionCaches.noDragging);
-		if (this.display.interactionEnabled == true && this.display.dragEnabled == true && dragFlag == true) {
+		if (this.display.interactionEnabled == true && dragFlag == true) {
 			this.display.snapCenter();
 		}
+		dragFlag = false;
 	},
 	noDragging: function(e) {
 		if (Utility.isDescendant(this.displayElement, e.relatedTarget)) return;

@@ -64,5 +64,22 @@ var Utility = {
 
 		if (v1.length == 1) return result[0];
 		return result;
+	},
+
+	loadJsCssFile: function(fileName, fileType, callback){
+		if (fileType=="js"){ //if fileName is a external JavaScript file
+			var fileref=document.createElement('script')
+			fileref.setAttribute("type","text/javascript")
+			fileref.setAttribute("src", fileName)
+		}
+		else if (fileType=="css"){ //if fileName is an external CSS file
+			var fileref=document.createElement("link")
+			fileref.setAttribute("rel", "stylesheet")
+			fileref.setAttribute("type", "text/css")
+			fileref.setAttribute("href", fileName)
+		}
+		if (typeof fileref!="undefined") {
+			document.getElementsByTagName("head")[0].appendChild(fileref)	
+		}
 	}
 }

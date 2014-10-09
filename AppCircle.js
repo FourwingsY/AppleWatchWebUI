@@ -1,12 +1,12 @@
-function AppCircle(_name, _parentMap) {
+function AppCircle(_name, _iconType) {
 	this.appName = _name;
 	this.radius = 50;
 	this.coord = [];
-	
-	this.backgroundColor = this.getRandomColor();
-	this.icon = this.makeIcon();
-
 	this.parentMap = undefined;
+
+	this.backgroundColor = this.getRandomColor();
+	this.iconType = _iconType;
+	this.icon = this.makeIcon(_iconType);
 }
 
 AppCircle.prototype = {
@@ -85,21 +85,40 @@ AppCircle.prototype = {
 	isSentinel: function() {
 		return false;
 	},
-	makeIcon: function() {
+	makeIcon: function(iconType) {
 		var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		svg.setAttribute("viewBox", "-50 -50 100 100");
-		svg.id = "anon-icon";
+		
+		if (iconType !== IconType.ANON)
+			svg.id = this.appName + "-icon";
 
-		var icon = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-		icon.setAttribute("cx", 0);
-		icon.setAttribute("cy", 0);
-		icon.setAttribute("r", 50);
-		icon.setAttribute("fill", this.getRandomColor());
-		svg.appendChild(icon)
+		if (iconType == IconType.ANON) {
+			svg.setAttribute("key", "anon-icon");
+
+			var icon = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+			icon.setAttribute("cx", 0);
+			icon.setAttribute("cy", 0);
+			icon.setAttribute("r", 50);
+			icon.setAttribute("fill", this.backgroundColor);
+			if (this.isSentinel()) {
+				icon.setAttribute("fill", "black");
+			}
+			svg.appendChild(icon)
+			
+		} else if (iconType == IconType.IMAGE) {
+			var imageAddr = "./apps/"+this.appName+"/"+this.appName+"-icon.svg";
+			var icon = document.createElementNS("http://www.w3.org/2000/svg", "image");
+			icon.setAttributeNS("http://www.w3.org/1999/xlink", "href", imageAddr)
+			svg.appendChild(icon)
+
+		} else if (iconType == IconType.ANIMATE) {
+			var icon = eval(this.appName+".drawIcon()");
+			svg.appendChild(icon);
+		}
 	
 		return svg;
 	},
 	getAppAddr: function() {
-		return "./apps/anon.html";
+		return "./apps/"+this.appName+"/"+this.appName+".html";
 	}
 }

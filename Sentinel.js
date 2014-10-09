@@ -1,7 +1,8 @@
 function Sentinel(_parentMap, _coord) {
-	AppCircle.call(this, "sentinel", _parentMap);
+	AppCircle.call(this, "anon", IconType.ANON);
+	this.parentMap = _parentMap;
 	this.coord = _coord;
-	this.color = "black";
+	this.backgroundColor = "black";
 }
 
 Sentinel.prototype = new AppCircle();

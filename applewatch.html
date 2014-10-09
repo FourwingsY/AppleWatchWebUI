@@ -2,47 +2,64 @@
 <head>
 <link rel="stylesheet" type="text/css" href="./applewatch.css">
 <style type="text/css">
-	.app-open {
-		display: block;
-		opacity: 1;
-		1-webkit-transition: opacity 2s;
-		1transition: opacity 2s;
-	}
-	.app-open-end {
-		opacity: 1;
-	}
 	#watch {
 		position: relative;
 		z-index: 1;
 	}
 	#runningApp {
-		position: absolute;
+		position: relative;
+		margin: 0 auto;
 		z-index: 3;
+	}
+	#crown {
+		position: relative;
+		left: 650px;
+		top: 190px;
+		width: 45px;
+		height: 110px;
+		background-color: transparent;
+		border: none;
+		-moz-user-select: -moz-none;
+		-khtml-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+	}
+	button:focus {
+		border: none;
+		outline: none;
 	}
 </style>
 </head>
 <body>
-<div id="background">
-	<div id="blackback"></div>
-	<svg id="watch" class="display" viewBox="-1.855 -2.325 3.75 4.7"
+<div id="background-image">
+	<div id="blackback" class="display"></div>
+	<div class="display">
+		<div id="runningApp"></div>
+	</div>
+	<svg id="icons" class="display" viewBox="-1.855 -2.325 3.75 4.7"
 		version="1.1"
     	xmlns="http://www.w3.org/2000/svg"
-    	xmlns:xlink="http://www.w3.org/1999/xlink">
+    	xmlns:xlink="http://www.w3.org/1999/xlink"
+    	style="background-color:'black';">
     </svg>
-	<div id="runningApp"></div>
+    <button id="crown" />
 </div>
-<script type="text/javascript" src="./Watch.js"></script>
 
+<!-- Launcher -->
 <script type="text/javascript" src="./Animation.js"></script>
 <script type="text/javascript" src="./Utility.js"></script>
+<script type="text/javascript" src="./IconType.js"></script>
 <script type="text/javascript" src="./AppCircle.js"></script>
-<script type="text/javascript" src="./WatchApp.js"></script>
 <script type="text/javascript" src="./Sentinel.js"></script>
 <script type="text/javascript" src="./Hexagon.js"></script>
 <script type="text/javascript" src="./Display.js"></script>
 <script type="text/javascript" src="./DragModule.js"></script>
 <script type="text/javascript" src="./ZoomModule.js"></script>
 <script type="text/javascript" src="./ClickModule.js"></script>
+
+<!-- Apps -->
+<script type="text/javascript" src="./AppList.js"></script>
 
 <script>
 var start = null;
@@ -51,17 +68,35 @@ var dragFlag = false;
 var animationTime = 0;
 var currentAnimationModule = null;
 
+// Load app system
+for (var i =0; i< appList.length; i++) {
+	var app = appList[i];
+	var appName = app.name;
+	var cssAddr = "./apps/"+appName+"/"+appName+".css";
+	var jsAddr = "./apps/"+appName+"/"+appName+".js";
+	Utility.loadJsCssFile(jsAddr, "js");
+	Utility.loadJsCssFile(cssAddr, "css");
+}
+
 window.onload = function() {
-	var svg = document.getElementById("watch");
-	var hex = new Hexagon(new WatchApp("watch"));
+	var svg = document.getElementById("icons");
+	var origin = appList[0];
+	var hex = new Hexagon(new AppCircle(origin.name, origin.iconType));
+	
+	for (var i =1; i< appList.length; i++) {
+		var app = appList[i];
+		hex.addApp(new AppCircle(app.name, app.iconType));
+	}
 	for (var i = 0; i < 80; i++) {
-		hex.addApp("anon");
+		hex.addApp(new AppCircle("anon", IconType.ANON));
 	}
 
-	display = new Display(svg, hex);
+	var crown = document.getElementById("crown")
+
+	var display = new Display(svg, hex);
 	display.draw();
 
-	var click = new ClickModule(display);
+	var click = new ClickModule(display, crown);
 	click.setClickable();
 
 	var drag = new DragModule(display);
@@ -69,42 +104,6 @@ window.onload = function() {
 	
 	var zoom = new ZoomModule(display);
 	zoom.setZoomable();
-}
-
-function animateSvgAttribute(svg, startCond, endCond, time, callback) {
-	function animation(timestamp) {
-		var progress;
-		if (start === null) start = timestamp;
-		progress = (timestamp - start) / time;
-		console.log(progress);
-		// 변화될 상태 계산
-		var states = {};
-		for (option in startCond) {
-			var state = Utility.interpolation(progress, 0, 1, startCond[option], endCond[option]);
-			states[option] = state;
-			if (states[option] instanceof Array)
-				states[option] = states[option].join(" ");
-		}
-		// debugger;
-		for (option in states) {
-			svg.setAttribute(option, states[option]);
-			console.log(states[option]);
-		}
-
-		if (progress < 1) {
-			window.requestAnimationFrame(animation);
-		} else {
-			start = null;
-			startState = null;
-			interactionEnabled = true;
-			runningApp = null;
-			if (callback !== null)
-				callback();
-			if (currentAnimationModule !== null)
-				currentAnimationModule.reset();
-		}
-	}
-	window.requestAnimationFrame(animation);
 }
 
 </script>
