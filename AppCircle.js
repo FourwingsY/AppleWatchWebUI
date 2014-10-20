@@ -109,6 +109,10 @@ AppCircle.prototype = {
 			var imageAddr = "./apps/"+this.appName+"/"+this.appName+"-icon.svg";
 			var icon = document.createElementNS("http://www.w3.org/2000/svg", "image");
 			icon.setAttributeNS("http://www.w3.org/1999/xlink", "href", imageAddr)
+			icon.setAttribute("x", -50);
+			icon.setAttribute("y", -50);
+			icon.setAttribute("width", 100);
+			icon.setAttribute("height", 100);
 			svg.appendChild(icon)
 
 		} else if (iconType == IconType.ANIMATE) {

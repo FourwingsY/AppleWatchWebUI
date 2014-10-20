@@ -248,7 +248,9 @@ Display.prototype = {
 			var scale = width / elementLtwh[2];
 
 			runningApp.style.opacity = progress;
-			runningApp.style.transform = "scale("+scale+","+scale+")"
+			runningApp.style.transform = "scale("+scale+","+scale+")";
+			runningApp.style.webkitTransform = "scale("+scale+","+scale+")";
+			
 			
 			if (progress < 1)
 				window.requestAnimationFrame(animation);
@@ -301,6 +303,7 @@ Display.prototype = {
 
 			runningApp.style.opacity = 1 - progress;
 			runningApp.style.transform = "scale("+scale+","+scale+")"
+			runningApp.style.webkitTransform = "scale("+scale+","+scale+")";
 			
 			if (progress < 1)
 				window.requestAnimationFrame(animation);

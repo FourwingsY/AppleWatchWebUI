@@ -96,11 +96,11 @@ window.onload = function() {
 	var display = new Display(svg, hex);
 	display.draw();
 
-	var click = new ClickModule(display, crown);
-	click.setClickable();
-
 	var drag = new DragModule(display);
 	drag.setDraggable();
+	
+	var click = new ClickModule(display, crown);
+	click.setClickable();
 	
 	var zoom = new ZoomModule(display);
 	zoom.setZoomable();

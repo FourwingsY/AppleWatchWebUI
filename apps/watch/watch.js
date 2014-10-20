@@ -199,12 +199,16 @@ var watch = {
 			"animation: sec-spin 60s linear 0s infinite normal;" +
 			"transform: rotate({secAngle}deg); } \n" +
 
+			"@keyframes sec-spin {" +
+			"0% { transform: rotate({secAngle}deg); }" +
+			"100% { transform: rotate({secAngle360}deg); } } " +
 			"@-webkit-keyframes sec-spin { " +
-			"0% { transform: rotate({secAngle}deg); } " +
-			"100% { transform: rotate({secAngle360}deg); } } \n";
+			"0% { -webkit-transform: rotate({secAngle}deg); } " +
+			"100% { -webkit-transform: rotate({secAngle360}deg); } } \n";
 		var re = new RegExp("{secAngle}", 'g');
 		secondStyle = secondStyle.replace(re, secAngle);
-		secondStyle = secondStyle.replace("{secAngle360}", secAngle + 360);
+		re = new RegExp("{secAngle360}", 'g');
+		secondStyle = secondStyle.replace(re, secAngle + 360);
 
 		var minuteStyle = ".minute {" + 
 			"-webkit-animation: min-spin 3600s linear 0s infinite normal;" +
@@ -214,12 +218,16 @@ var watch = {
 			"animation: min-spin 3600s linear 0s infinite normal;" +
 			"transform: rotate({minAngle}deg); } \n" +
 
+			"@keyframes min-spin {" +
+			"0% { transform: rotate({minAngle}deg); }" +
+			"100% { transform: rotate({minAngle360}deg); } } " +
 			"@-webkit-keyframes min-spin { " +
-			"0% { transform: rotate({minAngle}deg); } " +
-			"100% { transform: rotate({minAngle360}deg); } } \n";
+			"0% { -webkit-transform: rotate({minAngle}deg); } " +
+			"100% { -webkit-transform: rotate({minAngle360}deg); } } \n";
 		re = new RegExp("{minAngle}", 'g');
 		minuteStyle = minuteStyle.replace(re, minAngle);
-		minuteStyle = minuteStyle.replace("{minAngle360}", minAngle + 360);
+		re = new RegExp("{secAngle360}", 'g');
+		secondStyle = secondStyle.replace(re, minAngle + 360);
 
 		var hourStyle = ".hour {" + 
 			"-webkit-animation: hour-spin 43200s linear 0s infinite normal;" +
@@ -229,12 +237,16 @@ var watch = {
 			"animation: hour-spin 43200s linear 0s infinite normal;" +
 			"transform: rotate({hourAngle}deg); } \n" +
 
-			"@-webkit-keyframes hour-spin {" +
+			"@keyframes hour-spin {" +
 			"0% { transform: rotate({hourAngle}deg); }" +
-			"100% { transform: rotate({hourAngle360}deg); } } \n";
+			"100% { transform: rotate({hourAngle360}deg); } } " +
+			"@-webkit-keyframes hour-spin {" +
+			"0% { -webkit-transform: rotate({hourAngle}deg); }" +
+			"100% { -webkit-transform: rotate({hourAngle360}deg); } } \n";
 		re = new RegExp("{hourAngle}", 'g');
 		hourStyle = hourStyle.replace(re, hourAngle);
-		hourStyle = hourStyle.replace("{minAngle360}", hourAngle + 360);
+		re = new RegExp("{secAngle360}", 'g');
+		secondStyle = secondStyle.replace(re, hourAngle + 360);
 
 		var oldStyle = document.getElementById("watchStyle");
 		if (oldStyle) {

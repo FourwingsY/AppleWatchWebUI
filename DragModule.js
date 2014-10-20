@@ -20,8 +20,10 @@ DragModule.prototype = {
 		return [(e.clientX - displayLeft), (e.clientY - displayTop)];
 	},
 	dragStart: function(e) {
+		console.log("dragstart");
 		dragFlag = false;
 		this.displayElement.addEventListener("mousemove", this.dragFunctionCaches.dragging);
+		this.displayElement.addEventListener("touchmove", this.dragFunctionCaches.dragging);
 		this.displayElement.addEventListener("mouseout", this.dragFunctionCaches.noDragging);
 		this.lastMousePos = this.getMousePos(e);
 	},
@@ -39,6 +41,7 @@ DragModule.prototype = {
 	},
 	dragEnd: function(e) {
 		this.displayElement.removeEventListener("mousemove", this.dragFunctionCaches.dragging);
+		this.displayElement.removeEventListener("touchmove", this.dragFunctionCaches.dragging);
 		this.displayElement.removeEventListener("mouseout", this.dragFunctionCaches.noDragging);
 		if (this.display.interactionEnabled == true && dragFlag == true) {
 			this.display.snapCenter();
@@ -51,11 +54,17 @@ DragModule.prototype = {
 	},
 	setDraggable: function() {
 		this.displayElement.addEventListener("mousedown", this.dragFunctionCaches.dragStart);
+		this.displayElement.addEventListener("touchstart", this.dragFunctionCaches.dragStart);
 		this.displayElement.addEventListener("mouseup", this.dragFunctionCaches.dragEnd);
+		this.displayElement.addEventListener("touchend", this.dragFunctionCaches.dragEnd);
+		this.displayElement.addEventListener("touchcancel", this.dragFunctionCaches.dragEnd);
 	},
 	resetDraggable: function() {
 		this.displayElement.removeEventListener("mousedown", this.dragFunctionCaches.dragStart);
+		this.displayElement.removeEventListener("touchstart", this.dragFunctionCaches.dragStart);
 		this.displayElement.removeEventListener("mouseup", this.dragFunctionCaches.dragEnd);
+		this.displayElement.removeEventListener("touchend", this.dragFunctionCaches.dragEnd);
+		this.displayElement.removeEventListener("touchcancel", this.dragFunctionCaches.dragEnd);
 	}
 }
 
